@@ -12,7 +12,12 @@
 #pragma   comment(lib,   "WS2_32.LIB") 
 
 
-
+const char* itoa2(int val)
+{
+    static char result[sizeof(int) << 3 + 2];
+    sprintf(result, "%d", val);
+    return result;
+}
 
 
 
@@ -33,118 +38,139 @@ int main()
     std::cout << "Please enter the destination filename you want to transport:" << std::endl;
     std::cin >> destinationname;
 
-    if ((fopen(filename, "r")) == NULL)
+R:if ((fopen(filename, "r")) == NULL)
+{
+    std::cout << "Cannot   open   the source  file!" << std::endl;
+    return -1;
+}
+
+wVersionRequested = MAKEWORD(1, 1); //winsock version is 1.1
+
+err = WSAStartup(wVersionRequested, &wsaData); //check if there is an error in WSAStartup
+if (err != 0)
+{
+    std::cout << "WSAStartup error!";
+    return -1;
+}
+
+if (LOBYTE(wsaData.wVersion) != 1 ||
+    HIBYTE(wsaData.wVersion) != 1)  //check the winsock version
+{
+    WSACleanup();
+    std::cout << "winsock version error!";
+    return -1;
+}
+
+
+
+
+
+
+SOCKET sockClient = socket(AF_INET, SOCK_DGRAM, 0); //initialize winsock(client)
+SOCKADDR_IN addrSrv1;
+addrSrv1.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  //for test ,I use 127.0.0.1 as the server address.
+addrSrv1.sin_family = AF_INET;
+addrSrv1.sin_port = htons(1985);  //use port 1985
+
+tempfile = fopen(filename, "r+b");
+stat(filename, &fileState);
+std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
+
+
+
+char* dest = new char[MAX_LEN];
+
+
+SOCKET sockSrv = socket(AF_INET, SOCK_DGRAM, 0); //initialize winsock(server)
+SOCKADDR_IN addrSrv;
+addrSrv.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+addrSrv.sin_family = AF_INET;
+addrSrv.sin_port = htons(1986);  //use port 1986
+bind(sockSrv, (SOCKADDR*)&addrSrv, sizeof(SOCKADDR)); //bind port
+int len = sizeof(SOCKADDR);
+SOCKADDR_IN addrClient;
+char recvBuf[500];
+static SOCKET ListenSocket;
+ListenSocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+if (sendto(sockClient, "Here is a file", 14, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the server I want to send a file
+{
+    std::cout << stderr << "sendto error" << std::endl;
+    throw - 1;
+}
+
+
+while (1)
+{
+    if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
     {
-        std::cout << "Cannot   open   the source  file!" << std::endl;
-        return -1;
-    }
 
-    wVersionRequested = MAKEWORD(1, 1); //winsock version is 1.1
-
-    err = WSAStartup(wVersionRequested, &wsaData); //check if there is an error in WSAStartup
-    if (err != 0)
-    {
-        std::cout << "WSAStartup error!";
-        return -1;
-    }
-
-    if (LOBYTE(wsaData.wVersion) != 1 ||
-        HIBYTE(wsaData.wVersion) != 1)  //check the winsock version
-    {
-        WSACleanup();
-        std::cout << "winsock version error!";
-        return -1;
-    }
-
-
-
-
-
-
-    SOCKET sockClient = socket(AF_INET, SOCK_DGRAM, 0); //initialize winsock(client)
-    SOCKADDR_IN addrSrv1;
-    addrSrv1.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  //for test ,I use 127.0.0.1 as the server address.
-    addrSrv1.sin_family = AF_INET;
-    addrSrv1.sin_port = htons(1985);  //use port 1985
-
-    tempfile = fopen(filename, "r+b");
-    stat(filename, &fileState);
-    std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
-
-
-
-    char* dest = new char[MAX_LEN];
-
-
-    SOCKET sockSrv = socket(AF_INET, SOCK_DGRAM, 0); //initialize winsock(server)
-    SOCKADDR_IN addrSrv;
-    addrSrv.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
-    addrSrv.sin_family = AF_INET;
-    addrSrv.sin_port = htons(1986);  //use port 1986
-    bind(sockSrv, (SOCKADDR*)&addrSrv, sizeof(SOCKADDR)); //bind port
-    int len = sizeof(SOCKADDR);
-    SOCKADDR_IN addrClient;
-    char recvBuf[500];
-    static SOCKET ListenSocket;
-    ListenSocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-
-    if (sendto(sockClient, "Here is a file", 14, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the server I want to send a file
-    {
-        std::cout << stderr << "sendto error" << std::endl;
+        std::cout << stderr << "Can't Receive datagram" << std::endl;
         throw - 1;
     }
-
-
-    while (1)
+    // std::cout<<recvBuf;
+    if (strncmp(recvBuf, "Please send the filename", n) == 0) //continue waiting untill the server agree to transport,then send the file name
     {
-        if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
-        {
-
-            std::cout << stderr << "Can't Receive datagram" << std::endl;
-            throw - 1;
-        }
-        // std::cout<<recvBuf;
-        if (strncmp(recvBuf, "Please send the filename", n) == 0) //continue waiting untill the server agree to transport,then send the file name
-        {
-            if (sendto(sockClient, destinationname, strlen(destinationname), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-            {
-                std::cout << stderr << "sendto error" << std::endl;
-                throw - 1;
-            }
-            //  std::cout<<recvBuf;
-            break;
-        }
-
-
-    }
-    Sleep(1000);//wait for a minute,then send the file data
-
-    while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
-    {
-        Send_Total += data_size;
-        //  std::cout<<dest; //print the result.
-        std::cout << data_size;
-        if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+        if (sendto(sockClient, destinationname, strlen(destinationname), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
         {
             std::cout << stderr << "sendto error" << std::endl;
             throw - 1;
         }
-        std::cout << "Transmit:" << filename << "  byte:" << data_size << std::endl;
-
+        //  std::cout<<recvBuf;
+        break;
     }
-    Sleep(1000); //sleep another second, then send the file end mark.
 
 
-    if (sendto(sockClient, file_end, strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+}
+Sleep(1000);//wait for a minute,then send the file data
+
+while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
+{
+    Send_Total += data_size;
+    //  std::cout<<dest; //print the result.
+    std::cout << data_size;
+    if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
     {
         std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
     }
+    std::cout << "Transmit:" << filename << "  byte:" << data_size << std::endl;
+}
+Sleep(1000); //sleep another second, then send the file end mark.
 
-    std::cout << "Finished!! Totally Sent : byte" << Send_Total << std::endl;
-    fclose(tempfile);
-    closesocket(sockClient);
-    WSACleanup();
-    return 0;
+
+if (sendto(sockClient, file_end, strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+{
+    std::cout << stderr << "sendto error" << std::endl;
+    throw - 1;
+}
+
+    if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
+    {
+
+        std::cout << stderr << "Can't Receive datagram" << std::endl;
+        throw - 1;
+    }
+    if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
+    {
+        std::cout << "Lost while Sending!" << std::endl;
+        if (sendto(sockClient, "0", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+        {
+            std::cout << stderr << "sendto error" << std::endl;
+            throw - 1;
+        }
+        goto R;
+    }
+    else
+        if (sendto(sockClient, "1", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+        {
+            std::cout << stderr << "sendto error" << std::endl;
+            throw - 1;
+        }
+std::cout << "Finished!! Totally Sent : byte" << Send_Total << std::endl;
+fclose(tempfile);
+closesocket(sockClient);
+WSACleanup();
+return 0;
 
 }

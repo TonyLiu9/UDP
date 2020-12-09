@@ -10,10 +10,15 @@
 
 #define MAX_LEN 500
 //the max datagram is 500 bytes
-
+const char* itoa2(int val)
+{
+    static char result[sizeof(int) << 3 + 2];
+    sprintf(result, "%d", val);
+    return result;
+}
 int main()
 {
-    WORD wVersionRequested;
+    R:WORD wVersionRequested;
     WSADATA wsaData;
     FILE* recvData;
     int n;
@@ -102,7 +107,20 @@ int main()
 
         if ((n == 12) && (strncmp(recvBuf, file_end, n) == 0))// if file end is recived, finish the transporting and set flag=1
         {
-            std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
+            if (sendto(sockClient, itoa2(Total_Recv), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+            {
+                 std::cout << stderr << "sending check error!" << std::endl;
+                 throw - 1;
+            }
+            if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0)
+                {
+                    std::cout << stderr << "Can't Receive datagram" << std::endl;
+                    throw - 1;
+                }
+                if((n==1)&&(strncmp(recvbuf,"0",n)==0))
+                    goto R;
+                else
+                    std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
             flag = 1;
             memset(recvBuf, 0, 500);
             fclose(recvData);
@@ -114,7 +132,7 @@ int main()
             if ((fwrite(recvBuf, n, 1, recvData)) <= 0)
             {
                 fclose(recvData);
-                throw -1;
+                throw - 1;
             }
         }
 
