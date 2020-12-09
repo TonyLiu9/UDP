@@ -117,7 +117,7 @@ int main()
                     std::cout << stderr << "Can't Receive datagram" << std::endl;
                     throw - 1;
                 }
-                if((n==1)&&(strncmp(recvbuf,"0",n)==0))
+                if((n==1)&&(strncmp(recvBuf,"0",n)==0))
                     goto R;
                 else
                     std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
