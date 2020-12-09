@@ -9,8 +9,7 @@
 //this is the file end mark, you can enter any characters, just make sure it will not be repeatable.
 
 #define MAX_LEN 500
-//the problem 57 requires the max datagram is 500 bytes, so here we define 500 as the max length.
-
+//the max datagram is 500 bytes
 
 int main()
 {
