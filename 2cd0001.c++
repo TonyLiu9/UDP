@@ -145,28 +145,31 @@ if (sendto(sockClient, file_end, strlen(file_end), 0, (SOCKADDR*)&addrSrv1, size
     throw - 1;
 }
 
-    if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
-    {
+if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
+{
 
-        std::cout << stderr << "Can't Receive datagram" << std::endl;
+    std::cout << stderr << "Can't Receive datagram" << std::endl;
+    throw - 1;
+}
+if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
+{
+    std::cout << "Lost while Sending!" << std::endl;
+    if (sendto(sockClient, "0", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    {
+        std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
     }
-    if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
+    goto R;
+}
+else
+{
+    std::cout << "Checking!" << std::endl;
+    if (sendto(sockClient, "1", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
     {
-        std::cout << "Lost while Sending!" << std::endl;
-        if (sendto(sockClient, "0", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-        {
-            std::cout << stderr << "sendto error" << std::endl;
-            throw - 1;
-        }
-        goto R;
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
     }
-    else
-        if (sendto(sockClient, "1", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-        {
-            std::cout << stderr << "sendto error" << std::endl;
-            throw - 1;
-        }
+}
 std::cout << "Finished!! Totally Sent : byte" << Send_Total << std::endl;
 fclose(tempfile);
 closesocket(sockClient);
