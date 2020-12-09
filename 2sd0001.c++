@@ -115,7 +115,7 @@ int main()
             if ((fwrite(recvBuf, n, 1, recvData)) <= 0)
             {
                 fclose(recvData);
-                exit(-1);
+                throw -1;
             }
         }
 
