@@ -15,7 +15,7 @@ const char* itoa2(int val)
     static char result[sizeof(int) << 3 + 2];
     sprintf(result, "%d", val);
     return result;
-}//找了一个int强制转化const char*的较简洁的函数
+}//一个int强制转化const char*的较简洁的函数
 int main()
 {
 R:WORD wVersionRequested;
