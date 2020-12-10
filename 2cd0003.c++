@@ -74,7 +74,7 @@ addrSrv1.sin_port = htons(1985);  //use port 1985
 
 tempfile = fopen(filename, "r+b");
 stat(filename, &fileState);
-std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
+std::cout << "size of file: " << std::endl << fileState.st_size<<std::endl;//print the file size
 
 
 
