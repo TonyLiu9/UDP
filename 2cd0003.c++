@@ -8,7 +8,6 @@
 #define MAX_LEN 500
 #define file_end        "DIAMOND_DUST" 
 //this is the file end mark, you can enter any characters, just make sure it will not be repeatable.
-
 #pragma   comment(lib,   "WS2_32.LIB") 
 
 

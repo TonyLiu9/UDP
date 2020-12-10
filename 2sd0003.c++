@@ -8,7 +8,6 @@
 #pragma warning(disable:4996)
 #define file_end        "DIAMOND_DUST"
 //this is the file end mark, you can enter any characters, just make sure it will not be repeatable.
-
 #define MAX_LEN 500
 //the max datagram is 500 bytes
 const char* itoa2(int val)
@@ -146,7 +145,6 @@ R:WORD wVersionRequested;
                 throw - 1;
             }
         }
-
 
     }
     closesocket(sockSrv);
