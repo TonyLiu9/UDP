@@ -128,13 +128,13 @@ while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and
 {
     Send_Total += data_size;
     //  std::cout<<dest; //print the result.
-    std::cout << data_size;
+   // std::cout << data_size;
     if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
     {
         std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
     }
-    std::cout << "Transmit:" << filename << "  byte:" << data_size << std::endl;
+    std::cout << "Transmit:" << filename << "     byte:" << data_size << std::endl;
 }
 Sleep(1000); //sleep another second, then send the file end mark.
 
