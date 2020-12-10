@@ -122,7 +122,7 @@ while (1)
 
 
 }
-Sleep(1000);//wait for a minute,then send the file data
+Sleep(1000);//wait for a second,then send the file data
 
 while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
 {
@@ -154,7 +154,7 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
 if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
 {
     std::cout << "Lost while Sending!" << std::endl;
-    if (sendto(sockClient, "0", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    if (sendto(sockClient, "0", strlen("0"), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
     {
         std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
@@ -164,7 +164,7 @@ if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
 else
 {
     std::cout << "Checking!" << std::endl;
-    if (sendto(sockClient, "1", strlen(file_end), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    if (sendto(sockClient, "1", strlen("1"), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
     {
         std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
