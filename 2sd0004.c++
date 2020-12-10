@@ -109,7 +109,8 @@ R:WORD wVersionRequested;
         if ((n == 12) && (strncmp(recvBuf, file_end, n) == 0))// if file end is recived, finish the transporting and set flag=1
         {
             std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
-            flag = 1;
+            flag = 1; 
+            Checkflag = 0;
             memset(recvBuf, 0, 500);
             fclose(recvData);
             Total_Recv = 0;

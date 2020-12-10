@@ -75,7 +75,7 @@ addrSrv1.sin_port = htons(1985);  //use port 1985
 
 tempfile = fopen(filename, "r+b");
 stat(filename, &fileState);
-std::cout << "size of file: " << std::endl << fileState.st_size<<std::endl;//print the file size
+std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
 
 
 
@@ -130,7 +130,7 @@ CK:while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times 
     Send_Total += data_size;
     //  std::cout<<dest; //print the result.
    // std::cout << data_size;
-RESEND1:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
 {
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
@@ -140,14 +140,14 @@ if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeo
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
 }
-P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "    flag:" << Checkflag - 2 << std::endl;
+P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
 Checkflag++;
 CO:if ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
 {
     Send_Total += data_size;
     //  std::cout<<dest; //print the result.
    // std::cout << data_size;
-RESEND2:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+RESEND:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
 {
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
@@ -157,7 +157,7 @@ if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeo
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
 }
-P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "    flag:" << Checkflag - 2 << std::endl;
+P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
 LISTEN:if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
 {
 
@@ -169,10 +169,7 @@ if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
     if (x == 0)
     {
         y++;
-        if(y>=2)
-            goto R;
-        else
-            goto LISTEN;
+        goto LISTEN;
     }
     else
     {
@@ -184,8 +181,23 @@ if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
 else
 if (strncmp(recvBuf, itoa2(Checkflag - 1), strlen(itoa2(Checkflag - 1))) == 0)
 {
+
     Checkflag++;
     goto CO;
+}
+else
+{
+    if (++flagcount >= 3)
+    {
+        std::cout << "resend failed!" <<"ID:"<<recvBuf<< std::endl;
+        Checkflag++;
+        goto CO;
+    }
+    else
+    {
+        std::cout << "wrong!trying resend!" << std::endl;
+        goto RESEND;
+    }
 }
 }
 }
@@ -219,7 +231,7 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
     std::cout << stderr << "Can't Receive datagram" << std::endl;
     throw - 1;
 }
-std::cout << "Finished!! Totally Sent : " << Send_Total<<" byte" << std::endl;
+std::cout << "Finished!! Totally Sent : " << Send_Total << " byte" << std::endl;
 fclose(tempfile);
 closesocket(sockClient);
 WSACleanup();
