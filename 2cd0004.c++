@@ -75,7 +75,7 @@ addrSrv1.sin_port = htons(1985);  //use port 1985
 
 tempfile = fopen(filename, "r+b");
 stat(filename, &fileState);
-std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
+std::cout << "size of file: " << std::endl << fileState.st_size<<std::endl;//print the file size
 
 
 
@@ -140,7 +140,7 @@ if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeo
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
 }
-P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
+P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "    flag:" << Checkflag - 2 << std::endl;
 Checkflag++;
 CO:if ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
 {
@@ -157,7 +157,7 @@ if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeo
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
 }
-P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
+P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "    flag:" << Checkflag - 2 << std::endl;
 LISTEN:if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
 {
 
@@ -169,6 +169,9 @@ if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
     if (x == 0)
     {
         y++;
+        if(y>=2)
+            goto R;
+        else
         goto LISTEN;
     }
     else
@@ -181,7 +184,6 @@ if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
 else
 if (strncmp(recvBuf, itoa2(Checkflag - 1), strlen(itoa2(Checkflag - 1))) == 0)
 {
-
     Checkflag++;
     goto CO;
 }
