@@ -69,11 +69,10 @@ R:WORD wVersionRequested;
             throw - 1;
         }
 
-        
         // std::cout<<recvBuf;
         if ((flag == 1) && ((n == 14) && (strncmp(recvBuf, "Here is a file", n) == 0)))//if flag=1, it means the server agree to recive file
         {
-            if (sendto(sockClient, "Please send the filename", 25, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
+            if (sendto(sockClient, "Please send the filename", MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
             {
                 std::cout << stderr << "Can't send datagram.." << std::endl;
                 throw - 1;
@@ -94,7 +93,7 @@ R:WORD wVersionRequested;
                 }
                 else
                 {
-                    recvData = fopen(recvBuf, "w+b"); 
+                    recvData = fopen(recvBuf, "w+b");
                 }
                 break;
 
@@ -122,7 +121,7 @@ R:WORD wVersionRequested;
                 std::cout << stderr << "Can't Receive datagram" << std::endl;
                 throw - 1;
             }
-            if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
+            if ((n == 1) && (strncmp(recvBuf, "0", n) == 0))
                 goto R;
             else
                 std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
@@ -138,11 +137,6 @@ R:WORD wVersionRequested;
             if ((fwrite(recvBuf, n, 1, recvData)) <= 0)
             {
                 fclose(recvData);
-                throw - 1;
-            }
-            if (sendto(sockClient, "ACK CHECKED", 11, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
-            {
-                std::cout << stderr << "Can't send datagram.." << std::endl;
                 throw - 1;
             }
         }

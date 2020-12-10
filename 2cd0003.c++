@@ -74,7 +74,7 @@ addrSrv1.sin_port = htons(1985);  //use port 1985
 
 tempfile = fopen(filename, "r+b");
 stat(filename, &fileState);
-std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
+std::cout << "size of file: " << std::endl << fileState.st_size<<std::endl;//print the file size
 
 
 
@@ -129,25 +129,12 @@ while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and
     Send_Total += data_size;
     //  std::cout<<dest; //print the result.
    // std::cout << data_size;
-RESEND:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-{
-    std::cout << stderr << "sendto error" << std::endl;
-    throw - 1;
-}
-if ((n = recvfrom(sockSrv, recvBuf, 11, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
-{
-
-    std::cout << stderr << "Can't Receive datagram" << std::endl;
-    std::cout << "resending!" << std::endl;
-    goto RESEND;
-}
-// std::cout<<recvBuf;
-if (strncmp(recvBuf, "ACK CHECKED", n) != 0) //continue waiting untill the server agree to transport,then send the file name
-{
-    std::cout << "resending!" << std::endl;
-    goto RESEND;
-}
-P:std::cout << "Transmit:" << filename << "     byte:" << data_size << std::endl;
+    if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    {
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
+    }
+    std::cout << "Transmit:" << filename << "     byte:" << data_size << std::endl;
 }
 Sleep(1000); //sleep another second, then send the file end mark.
 
