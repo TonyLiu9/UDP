@@ -32,6 +32,7 @@ int main()
     int Send_Total = 0;
     int n = 0;
     int Checkflag = 2, flagcount = 0;
+    int x = 0, y = 0;
     std::cout << "Please enter the filename you want to transport:" << std::endl;
     std::cin >> filename;
     char destinationname[50];
@@ -157,7 +158,7 @@ if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeo
     throw - 1;
 }
 P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
-if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
+LISTEN:if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
 {
 
     std::cout << stderr << "Can't Receive datagram" << std::endl;
@@ -165,17 +166,28 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
 }
 if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
 {
-    Checkflag++;
-    goto CK;
+    if (x == 0)
+    {
+        y++;
+        goto LISTEN;
+    }
+    else
+    {
+        x = 0;
+        Checkflag++;
+        goto CK;
+    }
 }
 else
 if (strncmp(recvBuf, itoa2(Checkflag - 1), strlen(itoa2(Checkflag - 1))) == 0)
 {
+
     Checkflag++;
     goto CO;
 }
 }
 }
+
 /*
 if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
 {
@@ -205,7 +217,7 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
     std::cout << stderr << "Can't Receive datagram" << std::endl;
     throw - 1;
 }
-std::cout << "Finished!! Totally Sent : byte" << Send_Total << std::endl;
+std::cout << "Finished!! Totally Sent : " << Send_Total<<" byte" << std::endl;
 fclose(tempfile);
 closesocket(sockClient);
 WSACleanup();

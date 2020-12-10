@@ -129,10 +129,21 @@ R:WORD wVersionRequested;
                 std::cout << stderr << "Can't Receive datagram" << std::endl;
                 throw - 1;
             }
-            if (sendto(sockClient, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+            if (strncmp(itoa2(Checkflag), recvBuf, strlen(itoa2(Checkflag))) == 0 || strncmp(itoa2(Checkflag - 1), recvBuf, strlen(itoa2(Checkflag - 1))) == 0)
             {
-                std::cout << stderr << "sending check error!" << std::endl;
-                throw - 1;
+                if (sendto(sockClient, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+                {
+                    std::cout << stderr << "sending check error!" << std::endl;
+                    throw - 1;
+                }
+            }
+            else
+            {
+                if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+                {
+                    std::cout << stderr << "sending check error!" << std::endl;
+                    throw - 1;
+                }
             }
             /*
             if (sendto(sockClient, itoa2(), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
