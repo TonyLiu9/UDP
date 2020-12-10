@@ -172,7 +172,7 @@ if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
         if(y>=2)
             goto R;
         else
-        goto LISTEN;
+            goto LISTEN;
     }
     else
     {
