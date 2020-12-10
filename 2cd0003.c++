@@ -31,7 +31,6 @@ int main()
     char filename[50];
     int Send_Total = 0;
     int n = 0;
-    int Checkflag = 2, flagcount = 0;
     std::cout << "Please enter the filename you want to transport:" << std::endl;
     std::cin >> filename;
     char destinationname[50];
@@ -124,60 +123,17 @@ while (1)
 }
 Sleep(1000);//wait for a second,then send the file data
 
-CK:while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
+while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
 {
     Send_Total += data_size;
     //  std::cout<<dest; //print the result.
    // std::cout << data_size;
-RESEND1:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+RESEND:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
 {
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
 }
-if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-{
-    std::cout << stderr << "sendto error" << std::endl;
-    throw - 1;
-}
-P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
-Checkflag++;
-CO:if ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
-{
-    Send_Total += data_size;
-    //  std::cout<<dest; //print the result.
-   // std::cout << data_size;
-RESEND2:if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-{
-    std::cout << stderr << "sendto error" << std::endl;
-    throw - 1;
-}
-if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-{
-    std::cout << stderr << "sendto error" << std::endl;
-    throw - 1;
-}
-P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
-if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
-{
-
-    std::cout << stderr << "Can't Receive datagram" << std::endl;
-    throw - 1;
-}
-if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
-{
-    Checkflag++;
-    goto CK;
-}
-else
-if (strncmp(recvBuf, itoa2(Checkflag - 1), strlen(itoa2(Checkflag - 1))) == 0)
-{
-    Checkflag++;
-    goto CO;
-}
-}
-}
-/*
-if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
+if ((n = recvfrom(sockSrv, recvBuf, 11, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
 {
 
     std::cout << stderr << "Can't Receive datagram" << std::endl;
@@ -185,11 +141,13 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
     goto RESEND;
 }
 // std::cout<<recvBuf;
-if (strncmp(recvBuf, itoa2(), n) != 0) //continue waiting untill the server agree to transport,then send the file name
+if (strncmp(recvBuf, "ACK CHECKED", n) != 0) //continue waiting untill the server agree to transport,then send the file name
 {
     std::cout << "resending!" << std::endl;
     goto RESEND;
-}*/
+}
+P:std::cout << "Transmit:" << filename << "     byte:" << data_size << std::endl;
+}
 Sleep(1000); //sleep another second, then send the file end mark.
 
 
@@ -204,6 +162,25 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
 
     std::cout << stderr << "Can't Receive datagram" << std::endl;
     throw - 1;
+}
+if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
+{
+    std::cout << "Lost while Sending!" << std::endl;
+    if (sendto(sockClient, "0", strlen("0"), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    {
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
+    }
+    goto R;
+}
+else
+{
+    std::cout << "Checking!" << std::endl;
+    if (sendto(sockClient, "1", strlen("1"), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    {
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
+    }
 }
 std::cout << "Finished!! Totally Sent : byte" << Send_Total << std::endl;
 fclose(tempfile);
