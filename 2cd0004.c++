@@ -1,4 +1,4 @@
-
+//client
 #include <Winsock2.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -130,18 +130,18 @@ CK:while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times 
     Send_Total += data_size;
     //  std::cout<<dest; //print the result.
    // std::cout << data_size;
-if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-{
-    std::cout << stderr << "sendto error" << std::endl;
-    throw - 1;
-}
-if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-{
-    std::cout << stderr << "sendto error" << std::endl;
-    throw - 1;
-}
+    if (sendto(sockClient, dest, data_size, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    {
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
+    }
+    if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    {
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
+    }
 P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
-Checkflag++;
+    Checkflag++;
 CO:if ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
 {
     Send_Total += data_size;
@@ -187,16 +187,23 @@ if (strncmp(recvBuf, itoa2(Checkflag - 1), strlen(itoa2(Checkflag - 1))) == 0)
 }
 else
 {
-    if (++flagcount >= 3)
     {
-        std::cout << "resend failed!" <<"ID:"<<recvBuf<< std::endl;
-        Checkflag++;
-        goto CO;
-    }
-    else
-    {
-        std::cout << "wrong!trying resend!" << std::endl;
-        goto RESEND;
+        if (++flagcount >= 3)
+        {
+            std::cout << "resend failed!" << "ID:" << recvBuf << std::endl;
+            Checkflag++;
+            if (sendto(sockClient, "RESENDINGALL", 12, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+            {
+                std::cout << stderr << "sendto error" << std::endl;
+                throw - 1;
+            }
+            goto R;
+        }
+        else
+        {
+            std::cout << "wrong!trying resend!" << std::endl;
+            goto CO;
+        }
     }
 }
 }

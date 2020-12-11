@@ -21,13 +21,17 @@ int main()
 R:WORD wVersionRequested;
     WSADATA wsaData;
     FILE* recvData;
-    int n;
+    int n,cc=0;
     int i = 0;
     int Total_Recv = 0;
     recvData = fopen("e:\\temp.temp", "w+b");//temp file name
     int err;
     int flag = 1;
     int Checkflag = 0;
+    char a;     
+    a = 'A'; 
+    char* mem;
+    mem = &a;   // 正确
     wVersionRequested = MAKEWORD(1, 1);   //winsock version is 1.1
     err = WSAStartup(wVersionRequested, &wsaData);
     if (err != 0)
@@ -95,6 +99,7 @@ R:WORD wVersionRequested;
                 }
                 else
                 {
+                    
                     recvData = fopen(recvBuf, "w+b");
                 }
                 break;
@@ -121,6 +126,7 @@ R:WORD wVersionRequested;
         {
             Total_Recv += n;
             Checkflag++;
+            cc = 1;
             if ((fwrite(recvBuf, n, 1, recvData)) <= 0)
             {
                 fclose(recvData);
