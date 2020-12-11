@@ -1,4 +1,4 @@
-
+//client
 #include <Winsock2.h>
 #include <stdio.h>
 #include <stdlib.h> 

@@ -93,6 +93,10 @@ R:WORD wVersionRequested;
                 }
                 else
                 {
+                    if (strncmp("RECENDINGALL", recvBuf, 12) == 0)
+                {
+                    goto R;
+                }
                     recvData = fopen(recvBuf, "w+b"); 
                 }
                 break;
@@ -121,6 +125,10 @@ R:WORD wVersionRequested;
                 std::cout << stderr << "Can't Receive datagram" << std::endl;
                 throw - 1;
             }
+            if (strncmp("RECENDINGALL", recvBuf, 12) == 0)
+                {
+                    goto R;
+                }
             if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
                 goto R;
             else
