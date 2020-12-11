@@ -132,7 +132,7 @@ R:WORD wVersionRequested;
             {
                 goto R;
             }
-            if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
+            if ((n == 1) && (strncmp(recvBuf, itoa2(Total_Recv), n) != 0))
                 goto R;
             else
                 std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;

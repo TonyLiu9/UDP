@@ -180,7 +180,7 @@ if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
 else
 {
     std::cout << "Checking!" << std::endl;
-    if (sendto(sockClient, "1", strlen("1"), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+    if (sendto(sockClient, itoa2(Send_Total), strlen(itoa2(Send_Total)), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
     {
         std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
