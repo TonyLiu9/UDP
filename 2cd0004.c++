@@ -140,7 +140,7 @@ CK:while ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times 
         std::cout << stderr << "sendto error" << std::endl;
         throw - 1;
     }
-P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
+P1:std::cout << "Transmit:" << filename << "     byte:" << data_size << "    flag:" << Checkflag - 2 << std::endl;
     Checkflag++;
 CO:if ((data_size = fread(dest, 1, MAX_LEN, tempfile)) > 0) //read 500 times and each time read a char to ausure the data size
 {

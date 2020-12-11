@@ -21,15 +21,15 @@ int main()
 R:WORD wVersionRequested;
     WSADATA wsaData;
     FILE* recvData;
-    int n,cc=0;
+    int n, cc = 0;
     int i = 0;
     int Total_Recv = 0;
     recvData = fopen("e:\\temp.temp", "w+b");//temp file name
     int err;
     int flag = 1;
-    int Checkflag = 0;
-    char a;     
-    a = 'A'; 
+    int Checkflag = 2;
+    char a;
+    a = 'A';
     char* mem;
     mem = &a;   // 正确
     wVersionRequested = MAKEWORD(1, 1);   //winsock version is 1.1
@@ -99,7 +99,7 @@ R:WORD wVersionRequested;
                 }
                 else
                 {
-                    
+
                     recvData = fopen(recvBuf, "w+b");
                 }
                 break;
@@ -135,12 +135,12 @@ R:WORD wVersionRequested;
             if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
                 goto R;
             else
-            std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
+                std::cout << "Finished!!! Total Receive : " << Total_Recv << "    byte" << std::endl;
             flag = 1;
             Checkflag = 0;
             memset(recvBuf, 0, 500);
             fclose(recvData);
-            Total_Recv = 0;
+            Total_Recv = 2;
             continue;
         }
         else
