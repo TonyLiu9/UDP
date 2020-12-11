@@ -114,6 +114,27 @@ R:WORD wVersionRequested;
 
         if ((n == 12) && (strncmp(recvBuf, file_end, n) == 0))// if file end is recived, finish the transporting and set flag=1
         {
+            if (sendto(sockClient, itoa2(Total_Recv), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+            {
+                std::cout << stderr << "sending check error!" << std::endl;
+                throw - 1;
+            }
+            else
+            {
+                std::cout << "Checking!" << std::endl;
+            }
+            if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0)
+            {
+                std::cout << stderr << "Can't Receive datagram" << std::endl;
+                throw - 1;
+            }
+            if (strncmp("RECENDINGALL", recvBuf, 12) == 0)
+            {
+                goto R;
+            }
+            if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
+                goto R;
+            else
             std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
             flag = 1;
             Checkflag = 0;
