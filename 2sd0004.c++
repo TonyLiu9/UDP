@@ -137,16 +137,16 @@ R:WORD wVersionRequested;
             if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
                 goto R;
             else
-                std::cout <<"FINISHED!"<<std::endl<< "Total Receive : " << Total_Recv << "byte" << std::endl;
+                std::cout << "FINISHED!" << std::endl << "Total Receive : " << Total_Recv << "byte" << std::endl;
             end1 = clock();
             double seconds1 = (double)((double)end1 - (double)start1) / CLOCKS_PER_SEC;
-            std::cout << "time1:" << seconds1 <<"s"<< std::endl;
-            std::cout << "speed:" << (double)Total_Recv/ (double)seconds1 <<"bytes/s"<<std::endl;
+            std::cout << "time1:" << seconds1 << "s" << std::endl;
+            std::cout << "speed:" << (double)Total_Recv / (double)seconds1 << "bytes/s" << std::endl;
             flag = 1;
-            Checkflag = 0;
+            Checkflag = 2;
             memset(recvBuf, 0, 500);
             fclose(recvData);
-            Total_Recv = 2;
+            Total_Recv = 0;
             continue;
         }
         else
