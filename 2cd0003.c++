@@ -166,11 +166,11 @@ if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) <
 if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
 {
     std::cout << "Lost while Sending!" << std::endl;
-    if (sendto(sockClient, "0", strlen("0"), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-    {
-        std::cout << stderr << "sendto error" << std::endl;
-        throw - 1;
-    }
+    if (sendto(sockClient, "RESENDINGALL", 12, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+        {
+            std::cout << stderr << "sendto error" << std::endl;
+            throw - 1;
+        }
     goto R;
 }
 else
