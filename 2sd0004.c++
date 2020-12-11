@@ -18,6 +18,7 @@ const char* itoa2(int val)
 }
 int main()
 {
+    clock_t start1, end1, start2, end2;
 R:WORD wVersionRequested;
     WSADATA wsaData;
     FILE* recvData;
@@ -78,6 +79,7 @@ R:WORD wVersionRequested;
         // std::cout<<recvBuf;
         if ((flag == 1) && ((n == 14) && (strncmp(recvBuf, "Here is a file", n) == 0)))//if flag=1, it means the server agree to recive file
         {
+            start1 = clock();
             if (sendto(sockClient, "Please send the filename", 25, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
             {
                 std::cout << stderr << "Can't send datagram.." << std::endl;
@@ -135,7 +137,11 @@ R:WORD wVersionRequested;
             if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
                 goto R;
             else
-                std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
+                std::cout <<"FINISHED!"<<std::endl<< "Total Receive : " << Total_Recv << "byte" << std::endl;
+            end1 = clock();
+            double seconds1 = (double)((double)end1 - (double)start1) / CLOCKS_PER_SEC;
+            std::cout << "time1:" << seconds1 <<"s"<< std::endl;
+            std::cout << "speed:" << (double)Total_Recv/ (double)seconds1 <<"bytes/s"<<std::endl;
             flag = 1;
             Checkflag = 0;
             memset(recvBuf, 0, 500);

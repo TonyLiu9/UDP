@@ -157,7 +157,7 @@ if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeo
     std::cout << stderr << "sendto error" << std::endl;
     throw - 1;
 }
-P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "flag:" << Checkflag - 2 << std::endl;
+P2:std::cout << "Transmit:" << filename << "     byte:" << data_size << "    flag:" << Checkflag - 2 << std::endl;
 LISTEN:if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &len)) < 0) //recive the data from the server
 {
 

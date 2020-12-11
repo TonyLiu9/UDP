@@ -73,7 +73,7 @@ addrSrv1.sin_port = htons(1985);  //use port 1985
 
 tempfile = fopen(filename, "r+b");
 stat(filename, &fileState);
-std::cout << "size of file: " << std::endl << fileState.st_size;//print the file size
+std::cout << "size of file: " << std::endl << fileState.st_size << "bytes" << std::endl;//print the file size
 
 
 
@@ -167,10 +167,10 @@ if (strncmp(recvBuf, itoa2(Send_Total), n) != 0)
 {
     std::cout << "Lost while Sending!" << std::endl;
     if (sendto(sockClient, "RESENDINGALL", 12, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-        {
-            std::cout << stderr << "sendto error" << std::endl;
-            throw - 1;
-        }
+    {
+        std::cout << stderr << "sendto error" << std::endl;
+        throw - 1;
+    }
     goto R;
 }
 else
