@@ -24,6 +24,7 @@ R:WORD wVersionRequested;
     FILE* recvData;
     int n;
     int i = 0;
+    int cn = 0;
     int Total_Recv = 0;
     recvData = fopen("e:\\temp.temp", "w+b");//temp file name
     int err;
@@ -138,7 +139,7 @@ R:WORD wVersionRequested;
             end1 = clock();
             double seconds1 = (double)((double)end1 - (double)start1) / CLOCKS_PER_SEC;
             std::cout << "time1:" << seconds1 << "s" << std::endl;
-            std::cout << "speed:" << (double)Total_Recv / (double)seconds1 << "bytes/s" << std::endl; 
+            std::cout << "speed:" << (double)Total_Recv / (double)seconds1 << "bytes/s" << std::endl;
             flag = 1;
             memset(recvBuf, 0, 500);
             fclose(recvData);
@@ -153,10 +154,14 @@ R:WORD wVersionRequested;
                 fclose(recvData);
                 throw - 1;
             }
-            if (sendto(sockClient, "ACK CHECKED", 11, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
+            if (sendto(sockClient, "1", 1, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
             {
                 std::cout << stderr << "Can't send datagram.." << std::endl;
                 throw - 1;
+            }
+            else
+            {
+                cn++;
             }
         }
 
