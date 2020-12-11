@@ -1,4 +1,4 @@
-//client
+
 #include <Winsock2.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -190,13 +190,8 @@ else
     if (++flagcount >= 3)
     {
         std::cout << "resend failed!" <<"ID:"<<recvBuf<< std::endl;
-        Checkflag++; 
-        if (sendto(sockClient, "RESENDINGALL", 12, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-        {
-            std::cout << stderr << "sendto error" << std::endl;
-            throw - 1;
-        }
-        goto R;
+        Checkflag++;
+        goto CO;
     }
     else
     {

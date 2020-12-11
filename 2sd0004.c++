@@ -30,8 +30,7 @@ R:WORD wVersionRequested;
     int Checkflag = 0;
     wVersionRequested = MAKEWORD(1, 1);   //winsock version is 1.1
     err = WSAStartup(wVersionRequested, &wsaData);
-    if (err != 0) 
-    {
+    if (err != 0) {
         return -1;
     }
     if (LOBYTE(wsaData.wVersion) != 1 ||
@@ -141,10 +140,6 @@ R:WORD wVersionRequested;
             }
             else
             {
-                if (strncmp("RECENDINGALL", recvBuf, 12) == 0)
-                {
-                    goto R;
-                }
                 if (sendto(sockClient, itoa2(Checkflag), MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
                 {
                     std::cout << stderr << "sending check error!" << std::endl;
