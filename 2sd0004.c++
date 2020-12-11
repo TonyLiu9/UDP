@@ -135,7 +135,7 @@ R:WORD wVersionRequested;
             if ((n == 1) && (strncmp(recvBuf, "1", n) != 0))
                 goto R;
             else
-                std::cout << "Finished!!! Total Receive : " << Total_Recv << "    byte" << std::endl;
+                std::cout << "Finished!!! Total Receive : " << Total_Recv << " byte" << std::endl;
             flag = 1;
             Checkflag = 0;
             memset(recvBuf, 0, 500);
