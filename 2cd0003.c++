@@ -141,7 +141,7 @@ if ((n = recvfrom(sockSrv, recvBuf, 11, 0, (SOCKADDR*)&addrClient, &len)) < 0) /
     goto RESEND;
 }
 // std::cout<<recvBuf;
-if (strncmp(recvBuf, "1", n) != 0) //continue waiting untill the server agree to transport,then send the file name
+if (strncmp(recvBuf, itoa2(Send_Total), strlen(itoa2(Send_Total))) != 0) //continue waiting untill the server agree to transport,then send the file name
 {
     std::cout << "resending!" << std::endl;
     goto RESEND;

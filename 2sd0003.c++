@@ -154,7 +154,7 @@ R:WORD wVersionRequested;
                 fclose(recvData);
                 throw - 1;
             }
-            if (sendto(sockClient, "1", 1, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
+            if (sendto(sockClient, itoa2(Total_Recv), strlen(itoa2(Total_Recv)), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1) //tell to the client to continue
             {
                 std::cout << stderr << "Can't send datagram.." << std::endl;
                 throw - 1;
