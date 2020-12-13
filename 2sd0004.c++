@@ -30,6 +30,7 @@ R:WORD wVersionRequested;
     int flag = 1;
     int Checkflag = 2;
     char a;
+    int x = 0;
     a = 'A';
     char* mem;
     mem = &a;   // 正确
@@ -164,14 +165,36 @@ R:WORD wVersionRequested;
                 std::cout << stderr << "Can't Receive datagram" << std::endl;
                 throw - 1;
             }
-            if (strncmp(itoa2(Checkflag), recvBuf, strlen(itoa2(Checkflag))) == 0 || strncmp(itoa2(Checkflag - 1), recvBuf, strlen(itoa2(Checkflag - 1))) == 0)
+            if (strncmp(itoa2(Checkflag), recvBuf, strlen(itoa2(Checkflag))) == 0 )
             {
-                if (sendto(sockClient, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
-                {
-                    std::cout << stderr << "sending check error!" << std::endl;
-                    throw - 1;
-                }
+                x++;
             }
+            else
+                if (strncmp(itoa2(Checkflag - 1), recvBuf, strlen(itoa2(Checkflag - 1))) == 0)
+                {
+                    if (x == 0)
+                    {
+                        if (sendto(sockClient, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+                        {
+                            std::cout << stderr << "sending check error!" << std::endl;
+                            throw - 1;
+                        }
+                    }
+                    else
+                    {
+                        if (sendto(sockClient, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+                        {
+                            std::cout << stderr << "sending check error!" << std::endl;
+                            throw - 1;
+                        }
+                        if (sendto(sockClient, itoa2(Checkflag - 1), strlen(itoa2(Checkflag - 1)), 0, (SOCKADDR*)&addrSrv1, sizeof(SOCKADDR)) == -1)
+                        {
+                            std::cout << stderr << "sending check error!" << std::endl;
+                            throw - 1;
+                        }
+                        x = 0;
+                    }
+                }
             else
             {
                 if (strncmp("RECENDINGALL", recvBuf, 12) == 0)
