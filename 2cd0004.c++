@@ -166,12 +166,7 @@ LISTEN:if ((n = recvfrom(sockSrv, recvBuf, MAX_LEN, 0, (SOCKADDR*)&addrClient, &
 }
 if (strncmp(recvBuf, itoa2(Checkflag), strlen(itoa2(Checkflag))) == 0)
 {
-    if (x == 0)
-    {
-        y++;
-        goto LISTEN;
-    }
-    else
+   
     {
         x = 0;
         Checkflag++;
